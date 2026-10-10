@@ -68,6 +68,9 @@ nav.tabs a { display: flex; align-items: center; gap: 8px; white-space: nowrap; 
 nav.tabs a[aria-current=page] { background: var(--accent); color: var(--bg); font-weight: 700; }
 .iconbtn { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; background: var(--chip); border: 1px solid var(--chip-bd); color: var(--text); cursor: pointer; }
 .iconbtn:hover { background: var(--chip-hover); }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 3px; border-radius: 10px; background: var(--chip); border: 1px solid var(--chip-bd); }
+.seg button { padding: 6px 8px; border-radius: 8px; border: 0; background: transparent; color: var(--text2); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.seg button[aria-pressed=true] { background: var(--pop); color: var(--text); box-shadow: var(--shadow); }
 .userchip { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
 main.center { max-width: 420px; display: flex; flex-direction: column; gap: 14px; padding-top: 48px; }
 .field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text2); }
@@ -423,14 +426,14 @@ function showLogin() {
   $('#view').innerHTML = `<main class="center">
     <div class="pagehead" style="margin:0"><h1>Sign in</h1></div>
     <form class="card" id="loginForm" novalidate>
-      <span class="small muted">Use your <b>Tractor Junction app</b> mobile number and password. They are checked by logging in to the app on the connected phone (about 30 seconds).</span>
+      <span class="small muted">Use your <b>Tractor Junction app</b> mobile number and password. The agent logs in to the app on the connected phone — with OTP first if the phone has this number’s SIM, otherwise with your password.</span>
       <label class="field">Mobile number<input id="lMobile" inputmode="numeric" autocomplete="username" maxlength="13" placeholder="10-digit mobile number" required></label>
       <label class="field">Password<input id="lPass" type="password" autocomplete="current-password" required></label>
       <div id="loginDev"></div>
       <button class="cta" id="lGo" type="submit">Sign in ${ICON.arrow}</button>
       <span class="small" id="lMsg" role="alert"></span>
     </form>
-    <span class="xs faint">Your password is saved encrypted on this computer only, so you stay signed in. Sign out to remove it.</span>
+    <span class="xs faint">You stay signed in: your password is saved encrypted on this computer, for this Windows user only. Sign out to remove it.</span>
   </main>`;
   renderLoginDevice();
   $('#lMobile').focus();
@@ -442,7 +445,7 @@ function showLogin() {
     if (!password) { msg.style.color = 'var(--red-ink)'; msg.textContent = 'Enter your password.'; return; }
     $('#lGo').disabled = true;
     msg.style.color = 'var(--text2)';
-    msg.innerHTML = '<span class="spinner" style="width:14px;height:14px;vertical-align:-2px"></span> Logging in to the Tractor Junction app on your phone…';
+    msg.innerHTML = `<span class="spinner" style="width:14px;height:14px;vertical-align:-2px"></span> Logging in to the Tractor Junction app on your phone (OTP first, then password)…`;
     try {
       const r = await api('/api/v1/session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ mobile, password }) });
       store.set('token', r.token); store.set('user', r.mobile);
