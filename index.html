@@ -298,7 +298,7 @@ async function api(path, opts = {}) {
   try {
     res = await fetch(AGENT + path, { ...opts, headers: { ...(opts.headers || {}), ...(token() ? { authorization: 'Bearer ' + token() } : {}) } });
   } catch {
-    throw Object.assign(new Error('The LeadOps Agent is not running on this computer.'), { offline: true });
+    throw Object.assign(new Error('The LeadOps App Agent is not running on this computer.'), { offline: true });
   }
   const body = res.headers.get('content-type')?.includes('json') ? await res.json() : null;
   if (res.status === 401 && body?.error?.code === 'UNAUTHENTICATED') { store.set('token', null); store.set('user', null); setTimeout(route, 0); }
@@ -464,12 +464,12 @@ function renderLoginDevice() {
 function showOffline() {
   S.view = 'offline';
   $('#view').innerHTML = `<main class="center">
-    <div class="pagehead" style="margin:0"><h1>LeadOps Agent isn’t running</h1></div>
+    <div class="pagehead" style="margin:0"><h1>LeadOps App Agent isn’t running</h1></div>
     <div class="card">
-      <span class="small">This dashboard drives the phone through the <b>LeadOps Agent</b> on this computer.</span>
+      <span class="small">This dashboard drives the phone through the <b>LeadOps App Agent</b> on this computer.</span>
       <ol class="fix">
-        <li><b>1</b><span>Install it once: <a href="${AGENT_DOWNLOAD}" target="_blank" rel="noopener">download LeadOps Agent for Windows</a>.</span></li>
-        <li><b>2</b><span>Start <b>LeadOps Agent</b> from the Start menu (it also starts with Windows).</span></li>
+        <li><b>1</b><span>Install it once: <a href="${AGENT_DOWNLOAD}" target="_blank" rel="noopener">download LeadOps App Agent for Windows</a>.</span></li>
+        <li><b>2</b><span>Start <b>LeadOps App Agent</b> from the Start menu (it also starts with Windows).</span></li>
         <li><b>3</b><span>If the browser asks to “access devices on your local network”, click <b>Allow</b>.</span></li>
       </ol>
       <span class="xs muted">This page checks again every 10 seconds.</span>
