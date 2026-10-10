@@ -466,6 +466,16 @@ function renderLoginDevice() {
 }
 function showOffline() {
   S.view = 'offline';
+  if (S.updatingSince && Date.now() - S.updatingSince < 5 * 60_000) {
+    $('#view').innerHTML = `<main class="center">
+      <div class="pagehead" style="margin:0"><h1>LeadOps App Agent is updating…</h1></div>
+      <div class="card">
+        <span class="small"><span class="spinner" style="width:14px;height:14px;vertical-align:-2px"></span> Installing ${S.updatingTo ? 'version ' + esc(S.updatingTo) : 'the new version'}. This takes about a minute — nothing to do, this page reconnects by itself.</span>
+      </div>
+    </main>`;
+    setTimeout(() => S.view === 'offline' && showOffline(), 60_000);
+    return;
+  }
   $('#view').innerHTML = `<main class="center">
     <div class="pagehead" style="margin:0"><h1>LeadOps App Agent isn’t running</h1></div>
     <div class="card">
@@ -486,7 +496,13 @@ function showOffline() {
 async function loadDevice() {
   try {
     S.device = await api('/api/v1/device');
-    if (S.offline) { S.offline = false; route(); }
+    if (S.offline) { S.offline = false; S.updatingSince = 0; route(); }
+    // The agent updates itself when a new release is published; remember it so the brief
+    // restart shows "updating" instead of "not running".
+    api('/api/v1/health').then((h) => {
+      S.agentVersion = h.version;
+      if (h.update?.state === 'downloading' || h.update?.state === 'installing') { S.updatingSince = Date.now(); S.updatingTo = h.update.latest; }
+    }).catch(() => {});
   } catch (e) {
     S.device = { adb: false, device: null, error: 'Could not check the device' };
     if (e.offline && !S.offline) { S.offline = true; route(); }
