@@ -427,7 +427,7 @@ function showLogin() {
   $('#view').innerHTML = `<main class="center">
     <div class="pagehead" style="margin:0"><h1>Sign in</h1></div>
     <form class="card" id="loginForm" novalidate>
-      <span class="small muted">Use your <b>Tractor Junction app</b> mobile number and password. The agent logs in to the app on the connected phone — with OTP first if the phone has this number’s SIM, otherwise with your password.</span>
+      <span class="small muted">Use your <b>Tractor Junction app</b> mobile number and password. The agent logs in to the app on the connected phone with this mobile number and password.</span>
       <label class="field">Mobile number<input id="lMobile" inputmode="numeric" autocomplete="username" maxlength="13" placeholder="10-digit mobile number" required></label>
       <label class="field">Password<input id="lPass" type="password" autocomplete="current-password" required></label>
       <div id="loginDev"></div>
@@ -446,7 +446,7 @@ function showLogin() {
     if (!password) { msg.style.color = 'var(--red-ink)'; msg.textContent = 'Enter your password.'; return; }
     $('#lGo').disabled = true;
     msg.style.color = 'var(--text2)';
-    msg.innerHTML = `<span class="spinner" style="width:14px;height:14px;vertical-align:-2px"></span> Logging in to the Tractor Junction app on your phone (OTP first, then password)…`;
+    msg.innerHTML = `<span class="spinner" style="width:14px;height:14px;vertical-align:-2px"></span> Logging in to the Tractor Junction app on your phone…`;
     try {
       const r = await api('/api/v1/session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ mobile, password }) });
       store.set('token', r.token); store.set('user', r.mobile);
